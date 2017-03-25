@@ -63,10 +63,59 @@ class Distrochooser{
             $question->number = $i;
             $question->single = (int)$value->single === 1;
             $question->text = (int)$value->text === 1;
+            $query = "Select a.Id as id,(
+							Select da.Text from dictAnswer da where da.AnswerId = a.Id and da.LanguageId = ".$this->language."
+						)as text,a.Tags,a.NoTags,a.IsText as istext from Answer a where a.QuestionId = ".$question->id;
+            $stmt = $this->conn->query($query);
+            $answers = $stmt->fetchAll();
+            $question->answers = [];
+            foreach($answers as $answer){
+                 $a = new \Distrochooser3\Answer();
+                 $a->id = (int)$answer->id;
+                 $a->text = $answer->text;
+                 $a->notags = json_decode($answer->NoTags);
+                 $a->tags = json_decode($answer->Tags);
+                 $a->image = null;
+                 $a->istext = (int)$answer->istext === 1;
+                 $a->selected = false;
+                 $question->answers[] = $a;
+            }
             $result[] = $question;
             $i++;
         }
         return $result;
+    }
+
+    public function geti18n(){
+        $query = "Select Text,Val,Val as Name from phisco_ldc3.dictSystem where LanguageId =  ".$this->language;
+        $i18n = [];
+        $stmt = $this->conn->query($query);
+        $values = $stmt->fetchAll();
+        foreach($values as $tuple){
+            $translation = new \stdClass();
+            $translation->val = $tuple->Val;
+            $translation->name = $tuple->Name;
+            $i18n[$translation->name] = $translation;
+        }
+        return $i18n;
+    }
+
+    public function newvisitor(){
+        $referrer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "";
+        $useragent = $_SERVER['HTTP_USER_AGENT'];
+        $dnt = isset($_POST["dnt"]) && $_POST["dnt"] === "true" ? 1 : 0;
+        $query = "Insert into Visitor (Date,Referrer,UserAgent,DNT) Values(CURRENT_TIMESTAMP,?,?,?)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1,$referrer);
+        $stmt->bindParam(2,$useragent);
+        $stmt->bindParam(3,$dnt );
+        $stmt->execute();
+        $id = $this->conn->lastInsertId();
+        return $id;
+    }
+
+    public function addresult(){
+        
     }
 
     public function output($val){
