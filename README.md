@@ -10,5 +10,5 @@ This repository contains an experimental implementation of the distrochooser.de-
 - [x] /questions/:lang/
 - [x] /i18n/:lang/
 - [x] /newvisitor/
-- [ ] /get/:lang/ (combines /distributions /questions /i18n and /newvisitor)
+- [x] /get/:lang/ (combines /distributions /questions /i18n and /newvisitor)
 - [ ] /addresult/

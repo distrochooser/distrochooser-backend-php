@@ -114,8 +114,13 @@ class Distrochooser{
         return $id;
     }
 
-    public function addresult(){
-        
+    public function get(){
+        $response = new \stdClass();
+        $response->questions = $this->getQuestions();
+        $response->distros = $this->getDistributions();
+        $response->i18n = $this->geti18n();
+        $response->visitor = $this->newvisitor();
+        return $response;
     }
 
     public function output($val){
