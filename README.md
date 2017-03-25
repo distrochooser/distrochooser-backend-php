@@ -14,3 +14,4 @@ This repository contains an experimental implementation of the distrochooser.de-
 - [x] /addresult/
 - [x] /getstats/
 - [x] /lastratings/
+- [x] /addrating/@lang

@@ -167,6 +167,34 @@ class Distrochooser{
         return $stmt->fetchAll();
     }
 
+    public function newRatingWithComment(){
+        $rating = (int)$this->f3->get("POST.rating") ?? "0.0";
+        $comment = $this->f3->get("POST.comment")  ?? "";
+        $test = (int)$this->f3->get("POST.test")  ?? "";
+        $useragent = $_SERVER['HTTP_USER_AGENT'] ??  null ;
+        if ($test === 0){
+            return false;
+        }
+        $query = "Insert into Rating (Rating,Date,UserAgent,Comment,Test,Lang) Values (?,CURRENT_TIMESTAMP,?,?,?,?);";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1,$rating);
+        $stmt->bindParam(2,$useragent);
+        $stmt->bindParam(3,strip_tags($comment));
+        $stmt->bindParam(4,$test);
+        $stmt->bindParam(5,$this->language);
+        $stmt->execute();
+        return (int)$rating;
+        mail("fury224@googlemail.com","Distrochooser","Feedback");
+    }
+
+    public function getTest(int $id){
+        $query = "Select Answers as answers, Important as important from Result where Id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1,$id);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
     public function output($val){
 		echo json_encode($val);
     }

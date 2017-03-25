@@ -67,4 +67,18 @@ $f3->route('GET /getratings/@lang',
     }
 );
 
+$f3->route('POST /addrating/@lang',
+    function($f3) {
+        $distrochooser = new \Distrochooser3\Distrochooser($f3);
+        echo $distrochooser->output($distrochooser->newRatingWithComment());
+    }
+);
+
+$f3->route('GET /test/@id',
+    function($f3) {
+        $distrochooser = new \Distrochooser3\Distrochooser($f3);
+        echo $distrochooser->output($distrochooser->getTest((int)$f3->get("PARAMS.id")));
+    }
+);
+
 $f3->run();
