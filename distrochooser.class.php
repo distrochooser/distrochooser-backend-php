@@ -62,7 +62,8 @@ class Distrochooser{
             $question->important = false;
             $question->number = $i;
             $question->single = (int)$value->single === 1;
-            $question->text = (int)$value->text === 1;
+            $question->text = $value->text;
+            $question->answered = false;
             $query = "Select a.Id as id,(
 							Select da.Text from dictAnswer da where da.AnswerId = a.Id and da.LanguageId = ".$this->language."
 						)as text,a.Tags,a.NoTags,a.IsText as istext from Answer a where a.QuestionId = ".$question->id;
@@ -73,8 +74,8 @@ class Distrochooser{
                  $a = new \Distrochooser3\Answer();
                  $a->id = (int)$answer->id;
                  $a->text = $answer->text;
-                 $a->notags = json_decode($answer->NoTags);
-                 $a->tags = json_decode($answer->Tags);
+                 $a->notags = json_decode($answer->NoTags) ?? [];
+                 $a->tags = json_decode($answer->Tags) ?? [];
                  $a->image = null;
                  $a->istext = (int)$answer->istext === 1;
                  $a->selected = false;
@@ -87,13 +88,13 @@ class Distrochooser{
     }
 
     public function geti18n(){
-        $query = "Select Text,Val,Val as Name from phisco_ldc3.dictSystem where LanguageId =  ".$this->language;
+        $query = "Select Text,Val,Val as Name from dictSystem where LanguageId =  ".$this->language;
         $i18n = [];
         $stmt = $this->conn->query($query);
         $values = $stmt->fetchAll();
         foreach($values as $tuple){
             $translation = new \stdClass();
-            $translation->val = $tuple->Val;
+            $translation->val = $tuple->Text;
             $translation->name = $tuple->Name;
             $i18n[$translation->name] = $translation;
         }
@@ -120,6 +121,7 @@ class Distrochooser{
         $response->distros = $this->getDistributions();
         $response->i18n = $this->geti18n();
         $response->visitor = $this->newvisitor();
+        $response->lastRatings = []; //TODO:!!
         return $response;
     }
 
@@ -146,6 +148,23 @@ class Distrochooser{
             $stmt->execute();
         }
         return $id;
+    }
+
+    public function getstats(){
+        $query="SELECT COUNT( Id ) as count , DATE_FORMAT(DATE, '%d/%m') AS
+            MONTH FROM Result
+        WHERE YEAR( DATE ) = YEAR( CURDATE( ) )
+        and MONTH(DATE) = MONTH(CURDATE())
+        GROUP BY DATE_FORMAT(DATE, '%d.%m.%Y') desc";
+        return  $this->conn->query($query)->fetchAll();
+    }
+
+    public function getLastRatings(){
+        $query = "Select * from Rating where Approved = 1 and Lang = ? order by ID desc limit 7";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1,$this->language);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     public function output($val){

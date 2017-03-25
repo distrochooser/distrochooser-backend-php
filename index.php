@@ -53,4 +53,18 @@ $f3->route('POST /addresult',
     }
 );
 
+$f3->route('GET /getstats',
+    function($f3) {
+        $distrochooser = new \Distrochooser3\Distrochooser($f3);
+        echo $distrochooser->output($distrochooser->getstats());
+    }
+);
+
+$f3->route('GET /getratings/@lang',
+    function($f3) {
+        $distrochooser = new \Distrochooser3\Distrochooser($f3);
+        echo $distrochooser->output($distrochooser->getLastRatings());
+    }
+);
+
 $f3->run();
