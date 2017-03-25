@@ -1,4 +1,5 @@
 <?php
+header("X-LDC: Elephantastic Distrochooser 3.0.0");
 $f3 = require(__DIR__.'/vendor/bcosca/fatfree/lib/base.php');
 require(__DIR__."/distribution.class.php");
 require(__DIR__."/question.class.php");
@@ -7,7 +8,7 @@ require(__DIR__."/distrochooser.class.php");
 
 $f3->route('GET /',
     function() {
-        echo 'Hello, world!';
+        echo "I'm a five ton API.";
     }
 );
 $f3->route('GET /distributions/@lang',
