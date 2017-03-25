@@ -45,5 +45,11 @@ $f3->route('GET /get/@lang',
         echo $distrochooser->output($distrochooser->get());
     }
 );
+$f3->route('POST /addresult',
+    function($f3) {
+        $distrochooser = new \Distrochooser3\Distrochooser($f3);
+        echo $distrochooser->addresult();
+    }
+);
 
 $f3->run();

@@ -102,7 +102,7 @@ class Distrochooser{
 
     public function newvisitor(){
         $referrer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "";
-        $useragent = $_SERVER['HTTP_USER_AGENT'];
+        $useragent = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : ""; 
         $dnt = isset($_POST["dnt"]) && $_POST["dnt"] === "true" ? 1 : 0;
         $query = "Insert into Visitor (Date,Referrer,UserAgent,DNT) Values(CURRENT_TIMESTAMP,?,?,?)";
         $stmt = $this->conn->prepare($query);
@@ -121,6 +121,31 @@ class Distrochooser{
         $response->i18n = $this->geti18n();
         $response->visitor = $this->newvisitor();
         return $response;
+    }
+
+    public function addresult(){
+        $query = "Insert into phisco_ldc3.Result (Date,UserAgent,Tags, Answers,Important) Values(CURRENT_TIMESTAMP,?,?,?,?)";
+        $useragent = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : ""; 
+        $tags = $this->f3->get("POST.tags");
+        $distros = $this->f3->get("POST.distros");
+        $answers = $this->f3->get("POST.answers");
+        $important = $this->f3->get("POST.important");
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1,$useragent);
+        $stmt->bindParam(2,$tags);
+        $stmt->bindParam(3,$answers);
+        $stmt->bindParam(4,$important);
+        $stmt->execute();
+        $id = $this->conn->lastInsertId();
+        $results = json_decode($distros);
+        foreach($results as $d){
+            $query = "Insert into phisco_ldc3.ResultDistro (DistroId,ResultId) Values(?,?)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1,$d->id);
+            $stmt->bindParam(2,$id);
+            $stmt->execute();
+        }
+        return $id;
     }
 
     public function output($val){
