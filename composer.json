@@ -1,0 +1,19 @@
+{
+    "name": "cmllr/distrochooser-backend-php",
+    "description": "PHP powered Distrochooser backend",
+    "type": "project",
+    "require": {
+        "bcosca/fatfree": "^3.6"
+    },
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "Christoph MÜller",
+            "email": "fury224@googlemail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {"Distrochooser3\\": "/"}
+    }
+}
