@@ -105,7 +105,7 @@ class Distrochooser{
         $referrer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "";
         $useragent = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : ""; 
         $dnt = isset($_POST["dnt"]) && $_POST["dnt"] === "true" ? 1 : 0;
-        $query = "Insert into Visitor (Date,Referrer,UserAgent,DNT) Values(CURRENT_TIMESTAMP,?,?,?)";
+        $query = "Insert into Visitor (Date,Referrer,UserAgent,DNT,API) Values(CURRENT_TIMESTAMP,?,?,?,'stetler')";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1,$referrer);
         $stmt->bindParam(2,$useragent);
@@ -151,11 +151,17 @@ class Distrochooser{
     }
 
     public function getstats(){
-        $query="SELECT COUNT( Id ) as count , DATE_FORMAT(DATE, '%d/%m') AS
-            MONTH FROM Result
+        $query = "SELECT 
+        COUNT( Id ) as count ,
+        DATE_FORMAT(DATE, '%d/%m') AS MONTH,
+        DATE_FORMAT(DATE, '%d/%m/%Y') AS FullDate,
+        (
+        Select count(Id) from phisco_ldc3.Visitor where DATE_FORMAT(DATE, '%d/%m/%Y')  = FullDate
+        ) as hits
+        FROM phisco_ldc3.Result
         WHERE YEAR( DATE ) = YEAR( CURDATE( ) )
         and MONTH(DATE) = MONTH(CURDATE())
-        GROUP BY DATE_FORMAT(DATE, '%d.%m.%Y') desc";
+        GROUP BY FullDate";
         return  $this->conn->query($query)->fetchAll();
     }
 
