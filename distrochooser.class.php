@@ -105,11 +105,13 @@ class Distrochooser{
         $referrer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "";
         $useragent = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : ""; 
         $dnt = isset($_POST["dnt"]) && $_POST["dnt"] === "true" ? 1 : 0;
-        $query = "Insert into Visitor (Date,Referrer,UserAgent,DNT,API) Values(CURRENT_TIMESTAMP,?,?,?,'stetler')";
+        $adblocker = isset($_POST["adblocker"]) && $_POST["adblocker"] === "true" ? 1 : 0;
+        $query = "Insert into Visitor (Date,Referrer,UserAgent,DNT,API,Adblocker) Values(CURRENT_TIMESTAMP,?,?,?,'stetler',?)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1,$referrer);
         $stmt->bindParam(2,$useragent);
         $stmt->bindParam(3,$dnt );
+        $stmt->bindParam(4,$adblocker );
         $stmt->execute();
         $id = $this->conn->lastInsertId();
         return $id;

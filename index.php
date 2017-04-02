@@ -40,7 +40,7 @@ $f3->route('GET /newvisitor',
         echo $distrochooser->newvisitor();
     }
 );
-$f3->route('GET /get/@lang',
+$f3->route('POST /get/@lang',
     function($f3) {
         $distrochooser = new \Distrochooser3\Distrochooser($f3);
         echo $distrochooser->output($distrochooser->get());
