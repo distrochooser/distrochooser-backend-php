@@ -25,7 +25,7 @@ class Distrochooser{
         $result = [];
         $query = "Select d.Id,d.Name,d.Homepage,d.Image, (
         Select dd.Description from dictDistribution dd where  dd.DistributionId = d.Id and dd.LanguageId = ".$this->language." limit 1
-        ) as Description,d.ImageSource,d.TextSource,d.ColorCode,d.Characteristica from Distribution d";
+        ) as Description,d.ImageSource,d.TextSource,d.ColorCode,d.Characteristica from Distribution d order by d.Name";
         $stmt = $this->conn->query($query);
         $distros = $stmt->fetchAll();
         foreach ($distros as $key => $value) {
@@ -164,7 +164,7 @@ class Distrochooser{
         WHERE YEAR( DATE ) = YEAR( CURDATE( ) )
         and MONTH(DATE) = MONTH(CURDATE())
         GROUP BY FullDate";
-        return  $this->conn->query($query)->fetchAll();
+        return array_reverse($this->conn->query($query)->fetchAll());
     }
 
     public function getLastRatings(){
