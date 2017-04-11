@@ -183,16 +183,16 @@ class Distrochooser{
         if ($test === 0){
             return false;
         }
-        $query = "Insert into Rating (Rating,Date,UserAgent,Comment,Test,Lang) Values (?,CURRENT_TIMESTAMP,?,?,?,?);";
+        $query = "Insert into Rating (Rating,Date,UserAgent,Comment,Test,Lang,Approved) Values (?,CURRENT_TIMESTAMP,?,?,?,?,?);";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1,$rating);
         $stmt->bindParam(2,$useragent);
         $stmt->bindParam(3,strip_tags($comment));
         $stmt->bindParam(4,$test);
         $stmt->bindParam(5,$this->language);
+        $stmt->bindValue(6,empty($comment));
         $stmt->execute();
         return (int)$rating;
-        mail("fury224@googlemail.com","Distrochooser","Feedback");
     }
 
     public function getTest(int $id){
