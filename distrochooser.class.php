@@ -10,7 +10,8 @@ class Distrochooser{
     private $f3 = null;
     public function __construct($f3){
         header("Content-Type: text/json");
-        require __DIR__."/database.config.php";
+        header("Access-Control-Allow-Origin: *");
+	require __DIR__."/database.config.php";
         $options  = array
                     (
                         \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
@@ -102,7 +103,7 @@ class Distrochooser{
     }
 
     public function newvisitor(){
-        $referrer = isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : "";
+        $referrer = isset($_POST["referrer"]) ? $_POST["referrer"] : "";
         $useragent = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : ""; 
         $dnt = isset($_POST["dnt"]) && $_POST["dnt"] === "true" ? 1 : 0;
         $adblocker = isset($_POST["adblocker"]) && $_POST["adblocker"] === "true" ? 1 : 0;
