@@ -179,12 +179,13 @@ class Distrochooser{
     public function newRatingWithComment(){
         $rating = (int)$this->f3->get("POST.rating") ?? "0.0";
         $comment = $this->f3->get("POST.comment")  ?? "";
+        $email = $this->f3->get("POST.email") ?? null;
         $test = (int)$this->f3->get("POST.test")  ?? "";
         $useragent = $_SERVER['HTTP_USER_AGENT'] ??  null ;
         if ($test === 0){
             return false;
         }
-        $query = "Insert into Rating (Rating,Date,UserAgent,Comment,Test,Lang,Approved) Values (?,CURRENT_TIMESTAMP,?,?,?,?,?);";
+        $query = "Insert into Rating (Rating,Date,UserAgent,Comment,Test,Lang,Approved,Email) Values (?,CURRENT_TIMESTAMP,?,?,?,?,?,?);";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1,$rating);
         $stmt->bindParam(2,$useragent);
@@ -192,6 +193,7 @@ class Distrochooser{
         $stmt->bindParam(4,$test);
         $stmt->bindParam(5,$this->language);
         $stmt->bindValue(6,empty($comment));
+        $stmt->bindValue(7,empty($email) ? null : $email);
         $stmt->execute();
         return (int)$rating;
     }
