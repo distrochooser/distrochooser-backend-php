@@ -49,7 +49,7 @@ class Distrochooser{
 
     public function getQuestions(){
         $result = [];
-        $query = "Select q.Id as id,q.OrderIndex, dq.Text as text,q.Single as single, dq.Help as help,q.* 
+        $query = "Select q.Id as id,q.OrderIndex, dq.Text as text,q.Single as single, dq.Help as help,q.ExclusionTags,q.* 
         from Question q INNER JOIN dictQuestion dq
 			ON LanguageId = ".$this->language." and QuestionId= q.Id order by q.OrderIndex";
         $stmt = $this->conn->query($query);
@@ -65,6 +65,7 @@ class Distrochooser{
             $question->single = (int)$value->single === 1;
             $question->text = $value->text;
             $question->answered = false;
+            $question->exclusiontags = json_decode($value->ExclusionTags);
             $query = "Select a.Id as id,(
 							Select da.Text from dictAnswer da where da.AnswerId = a.Id and da.LanguageId = ".$this->language."
 						)as text,a.Tags,a.NoTags,a.IsText as istext from Answer a where a.QuestionId = ".$question->id;
