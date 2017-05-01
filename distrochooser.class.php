@@ -147,7 +147,7 @@ class Distrochooser{
         foreach($results as $d){
             $query = "Insert into phisco_ldc3.ResultDistro (DistroId,ResultId) Values(?,?)";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(1,$d->id);
+            $stmt->bindParam(1,$d);
             $stmt->bindParam(2,$id);
             $stmt->execute();
         }
