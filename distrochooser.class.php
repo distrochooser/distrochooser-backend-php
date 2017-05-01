@@ -170,7 +170,7 @@ class Distrochooser{
     }
 
     public function getLastRatings(){
-        $query = "Select * from Rating where Approved = 1 and Lang = ? order by ID desc limit 7";
+        $query = "Select UserAgent, Rating from Rating where Lang = ? order by ID desc limit 7";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1,$this->language);
         $stmt->execute();
@@ -204,7 +204,11 @@ class Distrochooser{
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1,$id);
         $stmt->execute();
-        return $stmt->fetch();
+        $tuple = $stmt->fetch();
+        $response = new \stdClass();
+        $response->answers = json_decode($tuple->answers);
+        $response->important = json_decode($tuple->important);
+        return $response;
     }
 
     public function output($val){
